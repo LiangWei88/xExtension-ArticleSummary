@@ -80,9 +80,9 @@ function setOaiState(container, statusType, statusMsg, summaryText) {
   }
 
   // Update content with summary text if provided
-  // 如果提供了总结文本，则更新内容
+  // Note: summaryText from marked.parse() is already HTML, no need to convert newlines
   if (summaryText) {
-    content.innerHTML = summaryText.replace(/(?:\r\n|\r|\n)/g, '<br>');
+    content.innerHTML = summaryText;
   }
 }
 

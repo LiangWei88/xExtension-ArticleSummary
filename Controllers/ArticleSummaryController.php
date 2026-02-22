@@ -181,7 +181,8 @@ final class FreshExtension_ArticleSummary_Controller extends Minz_ActionControll
 
     // Process text nodes
     if ($node->nodeType === XML_TEXT_NODE) {
-      $markdown .= trim($node->nodeValue);
+      // Normalize whitespace to single space, don't completely remove
+      $markdown .= preg_replace('/\s+/', ' ', $node->nodeValue);
     }
 
     // Process element nodes
@@ -260,11 +261,10 @@ final class FreshExtension_ArticleSummary_Controller extends Minz_ActionControll
           $markdown .= "\n";
           break;
         case 'li':
-          $markdown .= str_repeat("  ", $indentLevel) . "- ";
+          // Only process children - the parent ul/ol handles the bullet and newline
           foreach ($node->childNodes as $child) {
             $markdown .= $this->processNode($child, $xpath, $indentLevel + 1);
           }
-          $markdown .= "\n";
           break;
         case 'br':
           $markdown .= "\n";
