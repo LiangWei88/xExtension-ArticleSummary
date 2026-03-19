@@ -65,8 +65,12 @@ final class FreshExtension_ArticleSummary_Controller extends Minz_ActionControll
     // Process API URL - add version if missing (only for OpenAI)
     // 处理API URL - 如果缺少版本则添加（仅针对OpenAI）
     $oai_url = rtrim($oai_url, '/'); // Remove trailing slash
-    if ($oai_provider !== "ollama" && !preg_match('/\/v\d+\/?$/', $oai_url)) {
-        $oai_url .= '/v1'; // If there is no version information and it's not Ollama, add /v1
+    if (!preg_match('/\/v\d+(beta)?\/?$/', $oai_url)) {
+      if ($oai_provider === "gemini") {
+        $oai_url .= '/v1beta'; // Gemini heavily relies on v1beta for features like systemInstruction
+      } elseif ($oai_provider !== "ollama") {
+        $oai_url .= '/v1'; // Default to /v1 for OpenAI compatible APIs
+      }
     }
     
     // Prepare OpenAI API response
@@ -117,7 +121,27 @@ final class FreshExtension_ArticleSummary_Controller extends Minz_ActionControll
         'status' => 200
       );
     }
-    
+
+    // Prepare Gemini API response if selected
+    // 如果选择了Gemini API，则准备Gemini API响应
+    if ($oai_provider === "gemini") {
+      $oai_url = rtrim($oai_url, '/');
+      $successResponse = array(
+        'response' => array(
+          'data' => array(
+            "oai_url" => $oai_url . '/models/' . $oai_model . ':streamGenerateContent',
+            "oai_key" => $oai_key,
+            "model" => $oai_model,
+            "systemInstruction" => $oai_prompt,
+            "prompt" => "Title: " . $title . "\nAuthor: " . $author . "\n\nContent: " . $this->htmlToMarkdown($content),
+          ),
+          'provider' => 'gemini',
+          'error' => null
+        ),
+        'status' => 200
+      );
+    }
+
     // Send response
     // 发送响应
     echo json_encode($successResponse);

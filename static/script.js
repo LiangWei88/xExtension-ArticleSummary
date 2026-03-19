@@ -147,6 +147,8 @@ async function summarizeButtonClick(target) {
       // 向合适的AI提供商发送请求
       if (oaiProvider === 'openai') {
         await sendOpenAIRequest(container, oaiParams);
+      } else if (oaiProvider === 'gemini') {
+        await sendGeminiRequest(container, oaiParams);
       } else {
         await sendOllamaRequest(container, oaiParams);
       }
@@ -348,6 +350,84 @@ async function sendOllamaRequest(container, oaiParams){
     const errorMsg = error.response?.data?.error?.message || 
                     error.message || 
                     'Request Failed';
+    setOaiState(container, 2, errorMsg, null);
+  }
+}
+
+/**
+ * Send summarization request to Gemini API
+ * 向Gemini API发送总结请求
+ * 
+ * @param {HTMLElement} container - The summary container element
+ * @param {Object} oaiParams - Gemini API parameters
+ */
+async function sendGeminiRequest(container, oaiParams) {
+  try {
+    const url = `${oaiParams.oai_url}?key=${oaiParams.oai_key}&alt=sse`;
+    const body = {
+      systemInstruction: { parts: [{ text: oaiParams.systemInstruction }] },
+      contents: [{ parts: [{ text: oaiParams.prompt }] }]
+    };
+
+    // Send POST request to Gemini API
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      const errorMsg = errorData.error?.message || 'Request Failed';
+      throw new Error(errorMsg);
+    }
+
+    // Process streaming response with buffer
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let text = '';
+    let buffer = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) {
+        setOaiState(container, 0, 'finish', null);
+        break;
+      }
+
+      buffer += decoder.decode(value, { stream: true });
+
+      let endIndex;
+      while ((endIndex = buffer.indexOf('\n')) !== -1) {
+        const line = buffer.slice(0, endIndex).trim();
+        buffer = buffer.slice(endIndex + 1);
+
+        if (!line) continue;
+
+        if (line.startsWith('data: ')) {
+          const jsonString = line.slice(6).trim();
+          if (jsonString) {
+            try {
+              const json = JSON.parse(jsonString);
+              if (json.candidates && json.candidates[0] && json.candidates[0].content && json.candidates[0].content.parts && json.candidates[0].content.parts[0]) {
+                const chunkText = json.candidates[0].content.parts[0].text;
+                if (chunkText) {
+                  text += chunkText;
+                  setOaiState(container, 0, null, marked.parse(text));
+                }
+              }
+            } catch (e) {
+              console.error('Error parsing Gemini response:', e, 'Line:', jsonString);
+            }
+          }
+        }
+      }
+    }
+  } catch (error) {
+    console.error(error);
+    const errorMsg = error.message || 'Request Failed';
     setOaiState(container, 2, errorMsg, null);
   }
 }
