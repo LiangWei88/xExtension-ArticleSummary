@@ -9,7 +9,8 @@ return array(
         'default_prompt' => '请用中文总结以下文章。保持简洁但信息丰富，突出关键点和主要思想。',
         'save' => '保存',
         'openai' => 'OpenAI',
-        'ollama' => 'Ollama'
+        'ollama' => 'Ollama',
+        'gemini' => 'Gemini'
     ),
     'button' => array(
         'summarize' => '总结'

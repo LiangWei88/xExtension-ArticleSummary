@@ -6,12 +6,12 @@ This extension for FreshRSS allows users to generate summaries of articles using
 
 ## Features
 
-- **Multiple API Providers**: Supports both OpenAI and Ollama API providers for maximum flexibility.
+- **Multiple API Providers**: Supports OpenAI, Ollama, and Gemini API providers for maximum flexibility.
 - **API Configuration**: Easily configure the base URL, API key, model name, and prompt through a simple form.
 - **Summarize Button**: Adds a "summarize" button to each article, allowing users to generate a summary with a single click.
 - **Markdown Support**: Converts HTML content to Markdown before sending it to the API, ensuring compatibility with various language models.
 - **Streaming Response**: Processes and displays summarization results in real-time as they are received from the API.
-- **Automatic API Version Handling**: Automatically adds the appropriate API version path (e.g., `/v1`) to the base URL if missing.
+- **Automatic API Version Handling**: Automatically adds the appropriate API version path (e.g., `/v1` for OpenAI or `/v1beta` for Gemini) to the base URL if missing.
 - **Enhanced Error Handling**: Provides detailed error messages in case of API errors or incomplete configurations.
 - **Content Security Policy**: Configured to allow API requests to external endpoints.
 - **Internationalization (i18n)**: Supports English, Simplified Chinese (zh-CN), and Traditional Chinese (zh-TW) languages.

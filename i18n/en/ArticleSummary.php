@@ -9,7 +9,8 @@ return array(
         'default_prompt' => 'Please summarize the following article in English. Keep it concise but informative, highlighting the key points and main ideas.',
         'save' => 'Save',
         'openai' => 'OpenAI',
-        'ollama' => 'Ollama'
+        'ollama' => 'Ollama',
+        'gemini' => 'Gemini'
     ),
     'button' => array(
         'summarize' => 'Summarize'
