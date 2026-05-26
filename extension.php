@@ -89,7 +89,7 @@ final class ArticleSummaryExtension extends Minz_Extension
       . 'data-loading-text="' . $loadingText . '" '
       . 'data-error-text="' . $errorText . '" '
       . 'data-request-failed-text="' . $requestFailedText . '" '
-      . 'class="oai-summary-btn"></button>'
+      . 'class="oai-summary-btn">' . $summarizeText . '</button>'
       . '<div class="oai-summary-content"></div>'
       . '</div>'
       . $entry->content()

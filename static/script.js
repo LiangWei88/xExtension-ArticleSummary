@@ -18,14 +18,6 @@ if (document.readyState && document.readyState !== 'loading') {
 function configureSummarizeButtons() {
   document.getElementById('global').addEventListener('click', function (e) {
     for (var target = e.target; target && target != this; target = target.parentNode) {
-      
-      // Handle article header click to add text to summary button
-      // 处理文章标题点击，为总结按钮添加文本
-      if (target.matches('.flux_header')) {
-        const button = target.nextElementSibling.querySelector('.oai-summary-btn');
-        button.innerHTML = button.dataset.summarizeText;
-      }
-
       // Handle summarize button click
       // 处理总结按钮点击
       if (target.matches('.oai-summary-btn')) {
