@@ -200,7 +200,10 @@ final class FreshExtension_ArticleSummary_Controller extends Minz_ActionControll
    * @param int $indentLevel Indentation level for nested elements
    * @return string Markdown formatted content
    */
-  private function processNode(DOMNode $node, DOMXPath $xpath, int $indentLevel = 0): string {
+  private function processNode(?DOMNode $node, DOMXPath $xpath, int $indentLevel = 0): string {
+    if ($node === null) {
+      return '';
+    }
     $markdown = '';
 
     // Process text nodes
